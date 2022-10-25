@@ -41,7 +41,7 @@ export default class State extends EventTarget{
     setTransition(transition_key, state) {
         if(!this.#substates.has(state)) this.#addState(state);
         this.#transitions[transition_key] = state.name;
-        this.state.parent = this;
+        state.parent = this;
         this.addEventListener(transition_key, this.#switchState.bind(this));
     }
 
