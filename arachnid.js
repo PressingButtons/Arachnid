@@ -4,6 +4,9 @@ import defineSystem from "./arachnid_system/$sysmain.js";
 
 window.Arachnid = { };
 
-defineSystem(Arachnid);
-defineGraphicsLibrary(Arachnid);
-defineObjects(Arachnid);
+Arachnid.init = function(canvas, shaderURL = 'native') {
+    defineSystem(Arachnid);
+    defineObjects(Arachnid);    
+    defineGraphicsLibrary(Arachnid, canvas.getContext('webgl', {premultipliedAlpha: false}));
+    return Arachnid.Graphics_Lib.compile('/Arachnid/arachnid_shaders/config.json');
+}

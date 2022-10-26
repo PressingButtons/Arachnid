@@ -1,6 +1,6 @@
 export async function compile(gl, shader_json_location) {
     try {
-        const configuration = await fetch(shader_json_location);
+        const configuration = await fetch(shader_json_location).then(res => res.json( ));
         const shader_programs = { };
         for(const shader_program_name in configuration) 
             shader_programs[shader_program_name] = await createShaderProgram(gl, configuration[shader_program_name]);
@@ -12,8 +12,8 @@ export async function compile(gl, shader_json_location) {
 
 const createShaderProgram = async(gl, program_detail) => {
     try {
-        const vertex_text = await fetch(program_detail.vertex);
-        const fragment_text = await fetch(program_detail.fragment);
+        const vertex_text = await fetch(program_detail.vertex).then(res => res.text( ));
+        const fragment_text = await fetch(program_detail.fragment).then(res => res.text( ));
         const program = createLinkedProgram(gl, vertex_text, fragment_text);
         const attributes = findAttributes(gl, program, vertex_text, fragment_text);
         const uniforms = findUniforms(gl, program, vertex_text, fragment_text);
@@ -41,14 +41,16 @@ const defineShader = (gl, shader_text, shader_type) => {
     const shader = gl.createShader(shader_type);
     gl.shaderSource(shader, shader_text);
     gl.compileShader(shader);
-    const success = validateShader(gl, shader);
+    const success = validateShader(gl, shader, shader_text);
     if(success) return shader;
     else throw 'failed to compile \n' + shader_text;
 }
 
-const validateShader = (gl, shader) => {
-    if(gl.getShaderParameter(shader, gl.COMPLIE_STATUS)) return true;
-    throw 'Error compiling shader!\n'+ gl.ShaderInfoLog(shader);
+const validateShader = (gl, shader, text) => {
+    if(gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return true;
+    console.error(text);
+    console.error(gl.getShaderInfoLog(shader));
+    throw 'Error compiling shader!';
 }
 
 const defineProgram = (gl, vertex_shader, fragment_shader) => {
