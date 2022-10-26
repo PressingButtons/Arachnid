@@ -50,6 +50,7 @@ const validateShader = (gl, shader, text) => {
     if(gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return true;
     console.error(text);
     console.error(gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
     throw 'Error compiling shader!';
 }
 

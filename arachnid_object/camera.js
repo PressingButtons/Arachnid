@@ -5,14 +5,14 @@ export default class Camera extends State {
 
     #data;
 
-    constructor(config) {
+    constructor(width, height) {
         super('camera');
-        this.#data = new DataBuffer(39);
+        this.#data = new DataBuffer(347);
         this.#data.createViews([
             ['position', Int16Array, ['x', 'y', 'z']],
             ['size', Uint16Array, ['width', 'height']],
             ['rotation', Float32Array, ['x', 'y', 'z']],
-            ['fov', Float32Array, ['value']],
+            ['fov', Float64Array, ['value']],
             ['frustram', Float32Array, ['near', 'far']],
             ['brightness', Uint8Array, ['value']],
             ['tint', Uint8Array, ['red', 'green', 'blue', 'alpha']]
@@ -20,6 +20,9 @@ export default class Camera extends State {
         this.tint(255, 255, 255, 255);
         this.brightness = 255;
         this.setFrustram(1, 100);
+        this.width = width;
+        this.height = height;
+        this.fov = 45;
     }
 
     //position
@@ -44,7 +47,11 @@ export default class Camera extends State {
 
     //viewing
     get fov( ) {return this.#data.fov.value}
-    set fov(n) {this.#data.fov.value = n}
+    set fov(n) {this.#data.fov.value = n * Math.PI / 180}
+
+    get fov_degrees( ) {
+        return this.#data.fov.value * 180 / Math.PI
+    }
 
     get zNear( ) {return this.#data.frustram.near}
     set zNear(n) {this.#data.frustram.near = n}
@@ -60,8 +67,11 @@ export default class Camera extends State {
     }
 
     //size
-    get width( ) {return this.#data.size[0]}
-    get height( ) {return this.#data.size[1]}
+    get width( ) {return this.#data.size.width}
+    set width(n) {this.#data.size.width = n}
+
+    get height( ) {return this.#data.height}
+    set height(n) {this.#data.height = n}
     //private methods 
 
     //public methods 
@@ -93,8 +103,8 @@ export default class Camera extends State {
         return [...this.#data.tint.data];
     }
 
-    perspective(matrix) {
-        return glMatrix.mat4(matrix, this.fov, this.aspect, this.zNear, this.zFar);
+    perspective(matrix, mat4) {
+        return mat4.perspective(matrix, this.fov, this.aspect, this.zNear, this.zFar);
     }
 
 }
