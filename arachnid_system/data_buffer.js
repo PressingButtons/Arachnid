@@ -39,7 +39,9 @@ export default class DataBuffer {
 
     createViews(view_configs) {
         this.#sortViews(view_configs); //sort by bytes per element
-        for(const config of view_configs) this.createView(...config, false);
+        for(const config of view_configs) {
+            this.createView(...config, false);
+        }
     }
 
     unallocateView(name) {
