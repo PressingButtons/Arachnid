@@ -1,5 +1,5 @@
 import DataBuffer from "../arachnid_system/data_buffer.js";
-import State from "./state.js";
+import State from "../objects/state.js";
 
 export default class Camera extends State {
 
@@ -19,7 +19,7 @@ export default class Camera extends State {
         ]);
         this.tint(255, 255, 255, 255);
         this.brightness = 255;
-        this.setFrustram(1, 100);
+        this.setFrustram(1, -1);
         this.width = width;
         this.height = height;
         this.fov = 45;
@@ -35,6 +35,11 @@ export default class Camera extends State {
     get z( ) {return this.#data.position.z}
     set z(n) {this.#data.position.z = n}
 
+    get top( ) {return this.y - this.height /2}
+    get left( ) {return this.x - this.width / 2}
+    get right( ) {return this.x + this.width / 2}
+    get bottom ( ) {return this.y + this.height / 2}
+
     //rotation
     get rx( ) {return this.#data.rotation.x}
     set rx(n) {this.#data.rotation.x = n}
@@ -47,10 +52,10 @@ export default class Camera extends State {
 
     //viewing
     get fov( ) {return this.#data.fov.value}
-    set fov(n) {this.#data.fov.value = n * Math.PI / 180}
+    set fov(n) {this.#data.fov.value = n}
 
-    get fov_degrees( ) {
-        return this.#data.fov.value * 180 / Math.PI
+    get fov_radians( ) {
+        return this.#data.fov.value * Math.PI / 180
     }
 
     get zNear( ) {return this.#data.frustram.near}
@@ -103,8 +108,15 @@ export default class Camera extends State {
         return [...this.#data.tint.data];
     }
 
-    perspective(matrix, mat4) {
-        return mat4.perspective(matrix, this.fov, this.aspect, this.zNear, this.zFar);
+    perspective(matrix) {
+        glMatrix.mat4.perspective(matrix, this.fov_radians, this.aspect, this.zNear, this.zFar);
+        return matrix;
+    }
+
+    orthogonal(matrix) {
+        glMatrix.mat4.ortho(matrix, 0, this.width, this.height, 0, this.zNear, this.zFar);
+        glMatrix.mat4.translate(matrix, matrix, this.#data.position.data);
+        return matrix;
     }
 
 }

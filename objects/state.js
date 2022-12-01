@@ -4,10 +4,12 @@ export default class State extends EventTarget{
     #transitions = { };
     #current = null
     #name;
+    #src;
 
-    constructor(name) {
+    constructor(name, src) {
         super( );
         this.#name = name;
+        this.#src = src || this;
     }
 
     get name( ) {
@@ -18,8 +20,13 @@ export default class State extends EventTarget{
         return this.#current;
     }
 
+    get src( ) {
+        return this.#src
+    }
+
     #addState(state) {
         this.#substates.set(state.name, state);
+        state.parent = this;
     }
 
     #removeState(state) {
@@ -45,7 +52,11 @@ export default class State extends EventTarget{
         this.addEventListener(transition_key, this.#switchState.bind(this));
     }
 
-    transition(name, config) {
+    setTransitions(state_configuration) {
+        for(const transition in state_configuration) this.setTransition(transition, state_configuration[transition]);
+    }
+
+    signal(name, config) {
         this.dispatchEvent(new CustomEvent(name, {detail: config}));
     }
 

@@ -1,9 +1,8 @@
-export async function compile(gl, shader_json_location) {
+export default async function compile(gl, details) {
     try {
-        const configuration = await fetch(shader_json_location).then(res => res.json( ));
         const shader_programs = { };
-        for(const shader_program_name in configuration) 
-            shader_programs[shader_program_name] = await createShaderProgram(gl, configuration[shader_program_name]);
+        for(const shader_program_name in details) 
+            shader_programs[shader_program_name] = await createShaderProgram(gl, details[shader_program_name]);
         return shader_programs;
     } catch(err) {
         throw err;

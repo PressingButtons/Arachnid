@@ -1,0 +1,14 @@
+{
+    "standard_color" : {
+        "vertex" : "./Arachnid/shaders/standard_color_vertex.glsl",
+        "fragment" : "./Arachnid/shaders/standard_color_fragment.glsl"
+    },
+    "standard_texture": {
+        "vertex" : "./Arachnid/shaders/standard_texture_vertex.glsl",
+        "fragment": "./Arachnid/shaders/standard_texture_fragment.glsl"
+    }, 
+    "tilemap": {
+        "vertex": "./Arachnid/shaders/tile_vertex.glsl",
+        "fragment": "./Arachnid/shaders/tile_fragment.glsl"
+    }
+}
